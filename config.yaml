@@ -1,0 +1,27 @@
+batch_size: 128             # Size of batches sampled from the experience replay
+cuda: -1                    # Number of GPU to use, if available (-1 autoselects)
+env: CartPole-v0            # CartPole-v0 | MNIST | CIFAR10
+eps:                        # Hyperparameters for epsilon greedy exploration strategy
+  start: 0.9                # Initial probability of random action
+  end: 0.05                 # Final epsilon value
+  decay: 100                # Number of env steps for epsilon to decay to eps.end
+episodes: 100               # Number of episodes to run environment
+gamma: 0.95                 # Discount factor
+grad_clip: 1                # Clip value for Q-network grdient
+lr: 1.0e-3                  # Learning rate
+render: False               # True | False
+replay_capacity: 10000      # Maximum amount of Transitions in experience replay
+save_interval: 100          # Number of episodes in between saves
+target_update_interval: 5   # Number of steps in between target Q-network updates
+train_interval: 1           # Number of steps in between optimize's
+trial: 1                    # Use to run multiple trials with --multirun
+
+# Use Hydra colorlog
+defaults:
+  - hydra/job_logging: colorlog
+  - hydra/hydra_logging: colorlog
+
+# Save overriden hyperparamters in --multirun folders
+hydra:
+  sweep:
+    subdir: ${hydra.job.num}_${hydra.job.override_dirname}

@@ -1,0 +1,8 @@
+gym == 0.17.3
+hydra-core == 1.0.3
+hydra-colorlog == 1.0.0
+hydra-nevergrad-sweeper == 1.1.0rc1
+matplotlib == 3.3.1
+numpy == 1.19.1
+torch == 1.7.0
+torchvision == 0.8.1
