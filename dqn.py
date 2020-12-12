@@ -107,7 +107,15 @@ class Trainer:
         current_q = self.net(states).gather(1, actions)
 
         # compute V(s_{t+1}) for all next states
-        next_q, _ = self.target_net(next_states).max(1)
+        if cfg.double:
+            _, next_actions = self.net(next_states).max(1)
+            # N -> N x 1
+            next_actions = next_actions.unsqueeze(1)
+            next_q = self.target_net(next_states).gather(1, next_actions)
+            # N x 1 -> N
+            next_q = next_q.squeeze()
+        else:
+            next_q, _ = self.target_net(next_states).max(1)
         target = rewards + (1 - dones.float()) * cfg.gamma * next_q
 
         self.optimizer.zero_grad()

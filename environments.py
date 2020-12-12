@@ -31,5 +31,5 @@ class ClassEnv(gym.Env):
         done = self.index == self.n_examples - 1
         return image.numpy(), reward, done, None
 
-    def close():
+    def close(self):
         pass

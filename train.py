@@ -33,13 +33,12 @@ def plot_rewards(rewards, save=False):
     plt.title('Training...')
     plt.xlabel('Episode')
     plt.ylabel('Reward')
-    rewards = torch.tensor(rewards)
+    rewards = torch.tensor(rewards, dtype=torch.float)
     plt.plot(rewards.numpy(), label='Episode reward')
-    if len(rewards) >= 100:
+    if len(rewards) >= 200:
         means = rewards.unfold(0, 100, 1).mean(1).flatten()
         means = torch.cat((torch.zeros(99), means))
         plt.plot(means.numpy(), label='100 episode average')
-    plt.pause(0.001)  # pause a bit so that plots are updated
     if save:
         plt.savefig('rewards.png')
 
@@ -69,7 +68,7 @@ def main(cfg):
 
     trainer = dqn.Trainer(cfg, env, net)
     rewards = []
-    best_test_R = 0
+    best_test_R = float('-inf')
 
     for episode in range(1, cfg.episodes + 1):
         print(f'Episode {episode}')
@@ -89,7 +88,7 @@ def main(cfg):
 
         if episode % cfg.save_interval == 0 or episode == cfg.episodes:
             plot_rewards(rewards, save=True)
-            test_R = test.test(env, net, 3, False, trainer.device)
+            test_R, _ = test.test(env, net, 3, False, trainer.device)
             if test_R >= best_test_R:
                 log.info(f'Episode: {episode} New best net with a reward of {test_R:.1f}')
                 best_test_R = test_R
@@ -98,7 +97,7 @@ def main(cfg):
     env.close()
     torch.save(net.state_dict(), 'net-final.pth')
 
-    M = torch.tensor(rewards[-100:]).mean()
+    M = torch.tensor(rewards[-100:], dtype=torch.float).mean()
     log.info(f'Average of last 100 rewards: {M:.4f}')
     return M
 

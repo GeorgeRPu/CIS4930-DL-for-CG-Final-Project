@@ -1,5 +1,6 @@
 batch_size: 128             # Size of batches sampled from the experience replay
 cuda: -1                    # Number of GPU to use, if available (-1 autoselects)
+double: false               # Whether to use double DQN
 env: CartPole-v0            # CartPole-v0 | MNIST | CIFAR10
 eps:                        # Hyperparameters for epsilon greedy exploration strategy
   start: 0.9                # Initial probability of random action
