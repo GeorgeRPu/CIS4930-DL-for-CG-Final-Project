@@ -14,17 +14,35 @@ log = logging.getLogger(__name__)
 
 
 def get_args():
+    """Command line arguments.
+
+    Returns:
+        Args object
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('params_path')
-    parser.add_argument('--env', type=str, default='CartPole-v0')
-    parser.add_argument('--episodes', type=int, default=10)
-    parser.add_argument('--render', action='store_true', default=False)
+    parser.add_argument('--env', type=str, default='CartPole-v0',
+                        help='CartPole-v0 (default) | MNIST')
+    parser.add_argument('--episodes', type=int, default=10,
+                        help='Number of test episodes')
+    parser.add_argument('--render', action='store_true', default=False,
+                        help='Whether to render environment')
     return parser.parse_args()
 
 
 def test(env, net, episodes, render, device):
     """Runs net on environment for a given number of episodes and returns the
-    average cumulative reward.
+    average cumulative reward
+
+    Args:
+        env: Gym environment
+        net: Neural network
+        episodes: Number of test episodes
+        render: Whether to render test runs
+        device: Device on which neural network is stored
+
+    Returns:
+        Tensor of rewards, tensor of episodic Q-values
     """
     net.eval()
 

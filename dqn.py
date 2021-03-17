@@ -13,7 +13,12 @@ Transition = namedtuple('Transition',
 
 
 class Replay:
-    """Experience Replay utility class
+    """Experience replay memory.
+
+    Attributes:
+        capacity: Maximum number of transitions
+        buffer: Circular buffer
+        index: Pointer to most recently inserted transition
     """
 
     def __init__(self, capacity):
@@ -25,8 +30,16 @@ class Replay:
         return len(self.buffer)
 
     def push(self, state, action, next_state, reward, done):
-        """Pushes state as 1 x |S| tensor, action as 1 x 1 tensor, next_state
-        as 1 x |S| tensor, reward as 1 tensor, done as 1 tensor
+        """Pushes state as (1, S) tensor, action as (1, 1) tensor, next_state
+        as (1, S) tensor, reward as (1,) tensor, done as (1,) tensor (S =
+        dimension of state space).
+
+        Args:
+            state: (S,) tensor
+            action: () tensor
+            next_state: (S,) tensor
+            reward: () tensor
+            done: Whether episode ended
         """
         state = torch.tensor([state], dtype=torch.float)
         action = torch.tensor([[action]], dtype=torch.long)
@@ -40,8 +53,13 @@ class Replay:
         self.index = (self.index + 1) % self.capacity
 
     def sample(self, batch_size, device):
-        """Samples batch of states as N x |S| tensor, actions as N x 1 tensor,
-        next_state as N x |S| tensor, reward as N tensor, done as N tensor
+        """Samples batch of states as (N, S) tensor, actions as (N, 1) tensor,
+        next_state as (N, S) tensor, reward as (N,) tensor, done as (N,) tensor
+        (N = batch size, S = dimension of state space).
+
+        Args:
+            batch_size: Number of transitions to sample from experieince replay
+            device: Device to move tensors onto
         """
         transitions = random.sample(self.buffer, batch_size)
         # https://stackoverflow.com/a/19343/3343043
@@ -56,7 +74,18 @@ class Replay:
 
 
 class Trainer:
-    """Class implementing DQN algorithm
+    """DQN algorithm.
+
+    Attributes:
+        cfg: Hydra OmegaConf object
+        env: Gym environment
+        net: Neural network
+        criterion: Loss function
+        device: Device to store network on
+        replay: Experience replay memory
+        optimizer: Optimization algorithm
+        steps: Counter of environment steps taken
+        target_net: Copy of net whose weights are periodically synchronized
     """
 
     def __init__(self, cfg, env, net):
@@ -73,10 +102,16 @@ class Trainer:
         self.target_net = copy.deepcopy(net)
 
     def choose_action(self, obs):
-        """Outputs random action epsilon of the time and argmax_a Q(`obs`, a)
-        (1 - epsilon) of the time
+        """Outputs random action epsilon of the time and argmax_a Q(obs, a)
+        (1 - epsilon) of the time.
 
-        Epsilon decays linearly as more environmental steps are performed
+        Epsilon decays linearly as more environmental steps are performed.
+
+        Args:
+            obs: Observation
+
+        Returns:
+            Chosen action
         """
         cfg = self.cfg
 
@@ -92,9 +127,12 @@ class Trainer:
         return action
 
     def optimize(self, double=False):
-        """Performs a single optimization step on net
+        """Performs a single optimization step on net.
 
-        Can decide whether to use double DQN or regular DQN
+        Can decide whether to use Double DQN or regular DQN.
+
+        Args:
+            double: Whether to use Double DQN
         """
         cfg = self.cfg
 

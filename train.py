@@ -27,6 +27,10 @@ def get_free_gpu():
 
 def plot_rewards(rewards, save=False):
     """Plots total reward per episode along with 100 episode moving average
+
+    Args:
+        rewards: Array(-like) of rewards per episode
+        save: Whether to save plot
     """
     plt.figure(1)
     plt.clf()

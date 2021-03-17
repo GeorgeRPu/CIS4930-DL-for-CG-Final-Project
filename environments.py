@@ -3,6 +3,16 @@ import torch
 
 
 class ClassEnv(gym.Env):
+    """Classification environment.
+
+    Attributes:
+        action_space: Actions set
+        dataset: Classification dataset
+        index: Pointer to current example
+        label: Current label for index-th input
+        n_examples: Number of examples
+        perm: Permutation of {1, ..., n_examples}
+    """
 
     def __init__(self, dataset, n_classes):
         self.action_space = gym.spaces.Discrete(n_classes)
