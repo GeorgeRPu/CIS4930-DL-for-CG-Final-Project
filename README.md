@@ -1,4 +1,6 @@
-# Classifying Images via Reinforcement Learning (Project Part 3)
+# Classifying Images via Reinforcement Learning
+
+Project part 3 for CIS4930 Deep Learning for Computer Graphics (2020 Fall).
 
 ## Dependencies
 
